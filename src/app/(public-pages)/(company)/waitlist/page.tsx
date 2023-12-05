@@ -13,7 +13,7 @@ import { api } from "~/trpc/react";
 import FAQ from "~/components/FAQ";
 
 import { FAQS } from "~/constants";
-import animationData from "../../../../public/lottie/tick-animation.json";
+import animationData from "../../../../../public/lottie/tick-animation.json";
 
 const waitlistFormSchema = z.object({
   name: z.string().min(1),
