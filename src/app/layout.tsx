@@ -1,9 +1,9 @@
+import { ClerkProvider } from "@clerk/nextjs";
 import "~/styles/globals.css";
-
 import { Inter, Montserrat } from "next/font/google";
 import { cookies } from "next/headers";
-
 import { TRPCReactProvider } from "~/trpc/react";
+import CrispChat from "~/components/Crisp";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -32,12 +32,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={`font-sans ${inter.variable} ${montserrat.variable}`}>
-        <TRPCReactProvider cookies={cookies().toString()}>
-          {children}
-        </TRPCReactProvider>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en">
+        <body className={`font-sans ${inter.variable} ${montserrat.variable}`}>
+          <TRPCReactProvider cookies={cookies().toString()}>
+            {children}
+          </TRPCReactProvider>
+          <CrispChat />
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
