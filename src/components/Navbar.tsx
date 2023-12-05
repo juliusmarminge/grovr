@@ -33,16 +33,16 @@ const LogoJSX = (
       alt="GroVr Logo"
       priority
     />
-    <span className="text-secondary font-montserrat text-lg">GroVr</span>
+    <span className="font-montserrat text-lg text-secondary">GroVr</span>
   </Link>
 );
 
 const JoinOurTribeButtonJSX = (
   <Link
     href="/tribe"
-    className="border-primary text-primary group relative inline-flex items-center justify-center overflow-hidden rounded-full border-2 px-4 py-2 font-medium shadow-md transition duration-300 ease-out"
+    className="group relative inline-flex items-center justify-center overflow-hidden rounded-full border-2 border-primary px-4 py-2 font-medium text-primary shadow-md transition duration-300 ease-out"
   >
-    <span className="ease bg-primary absolute inset-0 flex h-full w-full -translate-x-full items-center justify-center text-white duration-300 group-hover:translate-x-0">
+    <span className="ease absolute inset-0 flex h-full w-full -translate-x-full items-center justify-center bg-primary text-white duration-300 group-hover:translate-x-0">
       <svg
         className="h-6 w-6"
         fill="none"
@@ -58,7 +58,7 @@ const JoinOurTribeButtonJSX = (
         ></path>
       </svg>
     </span>
-    <span className="ease text-primary absolute flex h-full w-full transform items-center justify-center transition-all duration-300 group-hover:translate-x-full">
+    <span className="ease absolute flex h-full w-full transform items-center justify-center text-primary transition-all duration-300 group-hover:translate-x-full">
       Join our Tribe
     </span>
     <span className="invisible relative">Join our Tribe</span>
@@ -101,7 +101,7 @@ const Navbar = () => {
             <Link
               key={item.name}
               href={item.href}
-              scroll={item.scroll}
+              // scroll={item.scroll}
               className="relative flex gap-2 text-sm font-semibold leading-6 text-gray-900"
             >
               {item.name}

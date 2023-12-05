@@ -6,15 +6,224 @@ generator client {
 }
 
 datasource db {
-    provider = "sqlite"
-    url      = env("DATABASE_URL")
+    provider     = "mysql"
+    url          = env("DATABASE_URL")
+    relationMode = "prisma"
 }
 
-model Post {
-    id        Int      @id @default(autoincrement())
-    name      String
+enum ContactResponseType {
+    COMPANY
+    TESTER
+}
+
+enum ContactResponseStatus {
+    UNRESOLVED
+    RESOLVED
+}
+
+model ContactUsResponses {
+    id                  Int                   @id @default(autoincrement())
+    fullName            String
+    email               String
+    companyName         String?
+    designation         String?
+    industry            String?
+    service             String?
+    message             String                @db.VarChar(500)
+    responseType        ContactResponseType
+    status              ContactResponseStatus @default(value: UNRESOLVED)
+    lastUpdatedByUserId String?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+enum UserType {
+    TESTER
+    COMPANY
+}
+
+model CompanyProfile {
+    id             String   @id @default(cuid())
+    name           String
+    email          String   @unique
+    website        String
+    about          String
+    industry       String
+    pocName        String?
+    pocPhoneNumber String?
+    pocCountryCode String?
+    size           String
+    user           UserData @relation(fields: [userId], references: [clerkUserId])
+    userId         String   @unique
+    createdAt      DateTime @default(now())
+    updatedAt      DateTime @updatedAt
+
+    @@index([userId])
+}
+
+model TesterProfile {
+    id          String   @id @default(cuid())
+    name        String
+    email       String   @unique
+    about       String
+    gender      String
+    age         Int
+    phoneNumber String   @unique
+    countryCode String
+    occupation  String
+    education   String
+    interests   String
+    devices     String
+    state       String
+    user        UserData @relation(fields: [userId], references: [clerkUserId])
+    userId      String   @unique
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    @@index([userId])
+}
+
+model UserData {
+    id                              String                           @id @default(cuid())
+    clerkUserId                     String                           @unique
+    userType                        UserType
+    avatarURL                       String                           @default("")
+    eventTaskSubmissions            TaskSubmission[]
+    companyProfile                  CompanyProfile?
+    testerProfile                   TesterProfile?
+    testingEventId                  String?
+    feedbackFormQuestionSubmissions FeedbackFormQuestionSubmission[]
+    createdEvents                   TestingEvent[]
+    participations                  ParticipationData[]
+
+    @@index([testingEventId])
+}
+
+model ParticipationData {
+    id           String  @id @default(cuid())
+    userId       String
+    status       String
+    eventId      String
+    hasSubmitted Boolean @default(value: false)
+
+    user  UserData     @relation(fields: [userId], references: [clerkUserId])
+    event TestingEvent @relation(fields: [eventId], references: [id])
+
+    @@unique([userId, eventId])
+    @@index([userId])
+    @@index([eventId])
+}
+
+model WaitlistData {
+    id       String   @id @default(cuid())
+    name     String
+    email    String   @unique
+    userType UserType
+
+    createdAt DateTime @default(now())
+}
+
+model TestingEvent {
+    id                 String              @id @default(cuid())
+    name               String
+    description        String              @db.VarChar(500)
+    typeOfTestingEvent String
+    typeOfTesting      String
+    numberOfTesters    Int
+    appLink            String
+    startDateTime      String
+    ageLevel           String
+    gender             String
+    educationLevel     String
+    occupation         String
+    interests          String
+    devices            String
+    states             String
+    status             String              @default(value: "upcoming")
+    createdById        String
+    tasks              EventTask[]
+    feedbackQuestions  FeedbackQuestion[]
+    participations     ParticipationData[]
+    createdBy          UserData            @relation(fields: [createdById], references: [id])
+
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    @@index([name])
+    @@index([createdById])
+}
+
+model EventTask {
+    id          String           @id @default(cuid())
+    title       String
+    description String           @db.VarChar(300)
+    submissions TaskSubmission[]
+    eventId     String
+    createdAt   DateTime         @default(now())
+    updatedAt   DateTime         @updatedAt
+
+    event TestingEvent @relation(fields: [eventId], references: [id])
+
+    @@index([eventId])
+}
+
+model FeedbackQuestion {
+    id           String                           @id @default(cuid())
+    question     String
+    questionType String
+    eventId      String
+    options      Option[]
+    required     Boolean
+    createdAt    DateTime                         @default(now())
+    updatedAt    DateTime                         @updatedAt
+    submission   FeedbackFormQuestionSubmission[]
+
+    event TestingEvent @relation(fields: [eventId], references: [id])
+
+    @@index([eventId])
+}
+
+model Option {
+    id                 String   @id @default(cuid())
+    value              String
+    feedbackQuestionId String
+    createdAt          DateTime @default(now())
+    updatedAt          DateTime @updatedAt
+
+    feedbackQuestion FeedbackQuestion @relation(fields: [feedbackQuestionId], references: [id])
+
+    @@index([feedbackQuestionId])
+}
+
+model TaskSubmission {
+    id            String   @id @default(cuid())
+    submissionURL String
+    taskId        String
+    eventId       String
+    testerId      String
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
+
+    task        EventTask @relation(fields: [taskId], references: [id])
+    submittedBy UserData  @relation(fields: [testerId], references: [clerkUserId])
+
+    @@index([taskId])
+    @@index([testerId])
+}
+
+model FeedbackFormQuestionSubmission {
+    id              String   @id @default(cuid())
+    questionId      String
+    testerId        String
+    eventId         String
+    createdAt       DateTime @default(now())
+    updatedAt       DateTime @updatedAt
+    answer          String?
+    selectedOptions String?
+
+    feedbackForm FeedbackQuestion @relation(fields: [questionId], references: [id])
+    submittedBy  UserData         @relation(fields: [testerId], references: [clerkUserId])
+
+    @@index([questionId])
+    @@index([testerId])
 }
