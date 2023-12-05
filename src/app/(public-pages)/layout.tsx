@@ -2,12 +2,10 @@
 import { type PropsWithChildren } from "react";
 import { motion } from "framer-motion";
 
-import Footer from "./Footer";
-import Navbar from "./Navbar";
+import Footer from "~/components/Footer";
+import Navbar from "~/components/Navbar";
 
-const PublicLayoutContainer: React.FC<PropsWithChildren> = (
-  props,
-): JSX.Element => {
+const Layout: React.FC<PropsWithChildren> = (props) => {
   return (
     <>
       <Navbar />
@@ -19,4 +17,4 @@ const PublicLayoutContainer: React.FC<PropsWithChildren> = (
   );
 };
 
-export default PublicLayoutContainer;
+export default Layout;
