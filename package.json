@@ -10,7 +10,8 @@
     "db:generate": "prisma generate",
     "dev": "next dev",
     "lint": "next lint",
-    "start": "next start"
+    "start": "next start",
+    "cl:build": "contentlayer build"
   },
   "dependencies": {
     "@clerk/nextjs": "^4.27.3",
@@ -25,16 +26,25 @@
     "@trpc/react-query": "^10.43.6",
     "@trpc/server": "^10.43.6",
     "canvas-confetti": "^1.9.2",
+    "contentlayer": "^0.3.4",
     "crisp-sdk-web": "^1.0.21",
+    "date-fns": "^2.30.0",
     "framer-motion": "^10.16.14",
     "next": "^14.0.3",
+    "next-contentlayer": "^0.3.4",
     "prop-types": "^15.8.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-email": "^1.10.0",
     "react-hook-form": "^7.48.2",
     "react-hot-toast": "^2.4.1",
+    "react-icons": "^4.12.0",
     "react-lottie": "^1.2.3",
+    "reading-time": "^1.5.0",
+    "rehype-autolink-headings": "^7.1.0",
+    "rehype-pretty-code": "^0.12.0",
+    "rehype-slug": "^6.0.0",
+    "remark-gfm": "^4.0.0",
     "resend": "^2.0.0",
     "server-only": "^0.0.1",
     "superjson": "^2.2.1",
@@ -60,6 +70,11 @@
     "prisma": "^5.6.0",
     "tailwindcss": "^3.3.5",
     "typescript": "^5.1.6"
+  },
+  "overrides": {
+    "next-contentlayer": {
+      "next": "$next"
+    }
   },
   "ct3aMetadata": {
     "initVersion": "7.24.1"
