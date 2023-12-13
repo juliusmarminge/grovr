@@ -6,11 +6,13 @@
  * TL;DR - This is where all the tRPC server stuff is created and plugged in. The pieces you will
  * need to use are documented accordingly near the end.
  */
-import { SignedInAuthObject, SignedOutAuthObject, getAuth } from "@clerk/nextjs/server";
+import type {
+  SignedInAuthObject,
+  SignedOutAuthObject,
+} from "@clerk/nextjs/server";
 import { TRPCError, initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
-import * as trpcNext from '@trpc/server/adapters/next';
 
 import { db } from "~/server/db";
 
@@ -29,21 +31,12 @@ import { db } from "~/server/db";
 interface AuthContext {
   auth: SignedInAuthObject | SignedOutAuthObject;
 }
- 
-export const createContextInner = async ({ auth }: AuthContext  ) => {
+
+export const createTRPCContext = async ({ auth }: AuthContext) => {
   return {
     db,
-    auth
-  }
-}
-
-export const createTRPCContext = async (opts: trpcNext.CreateNextContextOptions) => {
-  // return {
-  //   db,
-  //   ...opts,
-  // };
-
-  return await createContextInner({ auth: getAuth(opts.req) })
+    auth,
+  };
 };
 
 /**
@@ -90,17 +83,19 @@ export const createTRPCRouter = t.router;
  */
 export const publicProcedure = t.procedure;
 
-
 // check if the user is signed in, otherwise throw a UNAUTHORIZED CODE
 const isAuthed = t.middleware(({ next, ctx }) => {
   if (!ctx.auth.userId) {
-    throw new TRPCError({ code: 'UNAUTHORIZED', message: 'User is not logged in, from middleware.' })
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "User is not logged in, from middleware.",
+    });
   }
   return next({
     ctx: {
       auth: ctx.auth,
     },
-  })
-})
+  });
+});
 
-export const protectedProcedure = t.procedure.use(isAuthed)
+export const protectedProcedure = t.procedure.use(isAuthed);
